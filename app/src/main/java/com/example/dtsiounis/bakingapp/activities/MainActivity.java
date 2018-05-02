@@ -1,6 +1,7 @@
 package com.example.dtsiounis.bakingapp.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -91,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements RecipesRVAdapter.
 
     @Override
     public void onItemClickListener(int position) {
-
+        Log.d("Ingredient", "onCreate: " + recipes.get(position).getIngredients().get(position).getIngredient());
+        Intent intent = new Intent(this, RecipeStepsListActivity.class);
+        intent.putExtra("recipe", recipes.get(position));
+        startActivity(intent);
     }
 }

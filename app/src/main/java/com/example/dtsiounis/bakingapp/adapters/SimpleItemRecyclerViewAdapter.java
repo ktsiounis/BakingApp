@@ -1,8 +1,5 @@
 package com.example.dtsiounis.bakingapp.adapters;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +7,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.dtsiounis.bakingapp.R;
-import com.example.dtsiounis.bakingapp.activities.RecipeStepsDetailActivity;
 import com.example.dtsiounis.bakingapp.activities.RecipeStepsListActivity;
-import com.example.dtsiounis.bakingapp.fragments.RecipeStepsDetailFragment;
-import com.example.dtsiounis.bakingapp.activities.dummy.DummyContent;
-import com.example.dtsiounis.bakingapp.model.Ingredient;
 import com.example.dtsiounis.bakingapp.model.Step;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Konstantinos Tsiounis on 02-May-18.
@@ -25,37 +21,17 @@ import java.util.List;
 public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-    private final RecipeStepsListActivity mParentActivity;
     private final List<Step> mValues;
     private final boolean mTwoPane;
-    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
-            if (mTwoPane) {
-                Bundle arguments = new Bundle();
-                arguments.putString(RecipeStepsDetailFragment.ARG_ITEM_ID, item.id);
-                RecipeStepsDetailFragment fragment = new RecipeStepsDetailFragment();
-                fragment.setArguments(arguments);
-                mParentActivity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.recipe_detail_container, fragment)
-                        .commit();
-            } else {
-                Context context = view.getContext();
-                Intent intent = new Intent(context, RecipeStepsDetailActivity.class);
-                intent.putExtra(RecipeStepsDetailFragment.ARG_ITEM_ID, item.id);
-
-                context.startActivity(intent);
-            }
-        }
-    };
+    private ItemClickListener mClickListener;
 
     public SimpleItemRecyclerViewAdapter(RecipeStepsListActivity parent,
                                   List<Step> items,
-                                  boolean twoPane) {
+                                  boolean twoPane,
+                                  ItemClickListener mClickListener) {
         mValues = items;
-        mParentActivity = parent;
         mTwoPane = twoPane;
+        this.mClickListener = mClickListener;
     }
 
     @Override
@@ -70,8 +46,7 @@ public class SimpleItemRecyclerViewAdapter
         holder.mIdView.setText(mValues.get(position).getShortDescription());
         holder.mContentView.setText(mValues.get(position).getDescription());
 
-        holder.itemView.setTag(mValues.get(position));
-        holder.itemView.setOnClickListener(mOnClickListener);
+        //holder.itemView.setTag(mValues.get(position));
     }
 
     @Override
@@ -79,14 +54,24 @@ public class SimpleItemRecyclerViewAdapter
         return mValues.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView mIdView;
-        final TextView mContentView;
+    public interface ItemClickListener{
+        void onItemClickListener(int position);
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        @BindView(R.id.id_text) TextView mIdView;
+        @BindView(R.id.content) TextView mContentView;
 
         ViewHolder(View view) {
             super(view);
-            mIdView = (TextView) view.findViewById(R.id.id_text);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            ButterKnife.bind(this,view);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            mClickListener.onItemClickListener(position);
         }
     }
 }

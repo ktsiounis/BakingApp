@@ -1,5 +1,7 @@
 package com.example.dtsiounis.bakingapp.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import com.example.dtsiounis.bakingapp.R;
 
 import com.example.dtsiounis.bakingapp.adapters.SimpleItemRecyclerViewAdapter;
+import com.example.dtsiounis.bakingapp.fragments.RecipeStepsDetailFragment;
 import com.example.dtsiounis.bakingapp.model.Ingredient;
 import com.example.dtsiounis.bakingapp.model.Recipe;
 import com.example.dtsiounis.bakingapp.model.Step;
@@ -30,7 +33,7 @@ import butterknife.ButterKnife;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class RecipeStepsListActivity extends AppCompatActivity {
+public class RecipeStepsListActivity extends AppCompatActivity implements SimpleItemRecyclerViewAdapter.ItemClickListener {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -85,7 +88,24 @@ public class RecipeStepsListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, steps, mTwoPane));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, steps, mTwoPane, this));
     }
 
+    @Override
+    public void onItemClickListener(int position) {
+        if (mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(RecipeStepsDetailFragment.ARG_ITEM_ID, steps.get(position));
+            RecipeStepsDetailFragment fragment = new RecipeStepsDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipe_detail_container, fragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, RecipeStepsDetailActivity.class);
+            intent.putExtra(RecipeStepsDetailFragment.ARG_ITEM_ID, steps.get(position));
+
+            startActivity(intent);
+        }
+    }
 }

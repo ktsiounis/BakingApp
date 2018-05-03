@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.dtsiounis.bakingapp.R;
 import com.example.dtsiounis.bakingapp.fragments.RecipeStepsDetailFragment;
+import com.example.dtsiounis.bakingapp.model.Step;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * An activity representing a single Recipe detail screen. This
@@ -18,34 +23,34 @@ import com.example.dtsiounis.bakingapp.fragments.RecipeStepsDetailFragment;
  */
 public class RecipeStepsDetailActivity extends AppCompatActivity {
 
+    @BindView(R.id.detail_toolbar)
+    public Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_steps_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
+
+            Step step = getIntent().getParcelableExtra(RecipeStepsDetailFragment.ARG_ITEM_ID);
+            Log.d("DetailsActivity", "onCreate: " + step.getDescription());
+
             Bundle arguments = new Bundle();
-            arguments.putString(RecipeStepsDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(RecipeStepsDetailFragment.ARG_ITEM_ID));
+            arguments.putParcelable(RecipeStepsDetailFragment.ARG_ITEM_ID, step);
             RecipeStepsDetailFragment fragment = new RecipeStepsDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -54,19 +59,4 @@ public class RecipeStepsDetailActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            navigateUpTo(new Intent(this, RecipeStepsListActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

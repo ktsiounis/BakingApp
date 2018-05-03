@@ -15,6 +15,7 @@ import com.example.dtsiounis.bakingapp.activities.RecipeStepsListActivity;
 import com.example.dtsiounis.bakingapp.fragments.RecipeStepsDetailFragment;
 import com.example.dtsiounis.bakingapp.activities.dummy.DummyContent;
 import com.example.dtsiounis.bakingapp.model.Ingredient;
+import com.example.dtsiounis.bakingapp.model.Step;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class SimpleItemRecyclerViewAdapter
         extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
     private final RecipeStepsListActivity mParentActivity;
-    private final List<Ingredient> mValues;
+    private final List<Step> mValues;
     private final boolean mTwoPane;
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -50,7 +51,7 @@ public class SimpleItemRecyclerViewAdapter
     };
 
     public SimpleItemRecyclerViewAdapter(RecipeStepsListActivity parent,
-                                  List<Ingredient> items,
+                                  List<Step> items,
                                   boolean twoPane) {
         mValues = items;
         mParentActivity = parent;
@@ -66,8 +67,8 @@ public class SimpleItemRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mIdView.setText(mValues.get(position).getIngredient());
-        holder.mContentView.setText(String.valueOf(mValues.get(position).getQuantity()));
+        holder.mIdView.setText(mValues.get(position).getShortDescription());
+        holder.mContentView.setText(mValues.get(position).getDescription());
 
         holder.itemView.setTag(mValues.get(position));
         holder.itemView.setOnClickListener(mOnClickListener);

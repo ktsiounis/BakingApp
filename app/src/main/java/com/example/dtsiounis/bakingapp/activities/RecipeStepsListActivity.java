@@ -6,12 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.dtsiounis.bakingapp.R;
 
 import com.example.dtsiounis.bakingapp.adapters.SimpleItemRecyclerViewAdapter;
 import com.example.dtsiounis.bakingapp.model.Ingredient;
 import com.example.dtsiounis.bakingapp.model.Recipe;
+import com.example.dtsiounis.bakingapp.model.Step;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -36,8 +40,12 @@ public class RecipeStepsListActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
+    @BindView(R.id.ingredientsTV)
+    public TextView ingredientsTV;
+
 
     private ArrayList<Ingredient> ingredients = new ArrayList<>();
+    private ArrayList<Step> steps = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +56,12 @@ public class RecipeStepsListActivity extends AppCompatActivity {
 
         Recipe recipe = getIntent().getParcelableExtra("recipe");
         ingredients = recipe.getIngredients();
+        steps = recipe.getSteps();
 
         setSupportActionBar(toolbar);
         toolbar.setTitle(recipe.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle(recipe.getName());
 
         if (findViewById(R.id.recipe_detail_container) != null) {
@@ -61,13 +72,20 @@ public class RecipeStepsListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
+        for(int i=0; i<ingredients.size(); i++){
+            ingredientsTV.setText(ingredientsTV.getText() + " •"
+                    + ingredients.get(i).getIngredient()
+                    + " (" + ingredients.get(i).getQuantity()
+                    + ingredients.get(i).getMeasure() + ")");
+        }
+
         View recyclerView = findViewById(R.id.recipe_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ingredients, mTwoPane));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, steps, mTwoPane));
     }
 
 }

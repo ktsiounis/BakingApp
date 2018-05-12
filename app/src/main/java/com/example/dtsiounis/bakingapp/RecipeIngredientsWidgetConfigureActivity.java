@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dtsiounis.bakingapp.activities.RecipeStepsListActivity;
@@ -38,53 +39,41 @@ public class RecipeIngredientsWidgetConfigureActivity extends Activity implement
 
     private static final String PREFS_NAME = "com.example.dtsiounis.bakingapp.RecipeIngredientsWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
+    private static final String PREF_PREFIX_TITLE_KEY = "appwidget_title";
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private RecipesRVAdapter recipesRVAdapter;
     private ArrayList<Recipe> recipes;
 
-    @BindView(R.id.progressBar) public ProgressBar progressBar;
-    @BindView(R.id.content_recipes) public RecyclerView recipesRV;
-
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final Context context = RecipeIngredientsWidgetConfigureActivity.this;
-
-            // When the button is clicked, store the string locally
-//            String widgetText = mAppWidgetText.getText().toString();
-//            saveTitlePref(context, mAppWidgetId, widgetText);
-
-            // It is the responsibility of the configuration activity to update the app widget
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            RecipeIngredientsWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
-
-            // Make sure we pass back the original appWidgetId
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
-        }
-    };
+    @BindView(R.id.progressBarWidget) public ProgressBar progressBar;
+    @BindView(R.id.content_recipes_widget) public RecyclerView recipesRV;
 
     public RecipeIngredientsWidgetConfigureActivity() {
         super();
     }
 
     // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
+    static void saveTitlePref(Context context, int appWidgetId, String text, String title) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
+        prefs.putString(PREF_PREFIX_TITLE_KEY + appWidgetId, title);
         prefs.apply();
     }
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    static String loadTitlePref(Context context, int appWidgetId) {
+    static Bundle loadTitlePref(Context context, int appWidgetId) {
+        Bundle values = new Bundle();
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (titleValue != null) {
-            return titleValue;
+        String textValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+        String titleValue = prefs.getString(PREF_PREFIX_TITLE_KEY + appWidgetId, null);
+        values.putString("title", titleValue);
+        values.putString("text", textValue);
+        if (titleValue != null && textValue != null) {
+            return values;
         } else {
-            return context.getString(R.string.appwidget_text);
+            values.putString("title", context.getString(R.string.appwidget_text));
+            values.putString("text", context.getString(R.string.appwidget_text));
+            return values;
         }
     }
 
@@ -98,14 +87,13 @@ public class RecipeIngredientsWidgetConfigureActivity extends Activity implement
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        ButterKnife.bind(this);
-
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.recipe_ingredients_widget_configure);
         //findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
+        ButterKnife.bind(this);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recipesRV.setLayoutManager(mLayoutManager);
@@ -167,10 +155,31 @@ public class RecipeIngredientsWidgetConfigureActivity extends Activity implement
 
     @Override
     public void onItemClickListener(int position) {
-        Log.d("Ingredient", "onCreate: " + recipes.get(position).getIngredients().get(position).getIngredient());
-        Intent intent = new Intent(this, RecipeStepsListActivity.class);
-        intent.putExtra("recipe", recipes.get(position));
-        startActivity(intent);
+        final Context context = RecipeIngredientsWidgetConfigureActivity.this;
+
+        // When the button is clicked, store the string locally
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<recipes.get(position).getIngredients().size(); i++){
+            if(i != recipes.get(position).getIngredients().size() - 1) {
+                sb.append(recipes.get(position).getIngredients().get(i).getIngredient()).append(" ,");
+            }
+            else{
+                sb.append(recipes.get(position).getIngredients().get(i).getIngredient());
+            }
+        }
+        String widgetText = sb.toString();
+
+        saveTitlePref(context, mAppWidgetId, widgetText, recipes.get(position).getName());
+
+        // It is the responsibility of the configuration activity to update the app widget
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        RecipeIngredientsWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+
+        // Make sure we pass back the original appWidgetId
+        Intent resultValue = new Intent();
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+        setResult(RESULT_OK, resultValue);
+        finish();
     }
 }
 

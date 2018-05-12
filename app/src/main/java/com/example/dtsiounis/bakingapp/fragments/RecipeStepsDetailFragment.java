@@ -1,6 +1,5 @@
 package com.example.dtsiounis.bakingapp.fragments;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import com.example.dtsiounis.bakingapp.R;
 import com.example.dtsiounis.bakingapp.activities.RecipeStepsDetailActivity;
 import com.example.dtsiounis.bakingapp.activities.RecipeStepsListActivity;
-import com.example.dtsiounis.bakingapp.activities.dummy.DummyContent;
 import com.example.dtsiounis.bakingapp.model.Step;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;

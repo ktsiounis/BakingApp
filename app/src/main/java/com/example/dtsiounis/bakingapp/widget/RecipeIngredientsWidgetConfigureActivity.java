@@ -1,4 +1,4 @@
-package com.example.dtsiounis.bakingapp;
+package com.example.dtsiounis.bakingapp.widget;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -13,12 +13,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dtsiounis.bakingapp.activities.RecipeStepsListActivity;
+import com.example.dtsiounis.bakingapp.R;
 import com.example.dtsiounis.bakingapp.adapters.RecipesRVAdapter;
 import com.example.dtsiounis.bakingapp.model.Recipe;
 import com.example.dtsiounis.bakingapp.rest.APIClient;
@@ -37,7 +35,7 @@ import retrofit2.Response;
  */
 public class RecipeIngredientsWidgetConfigureActivity extends Activity implements RecipesRVAdapter.ItemClickListener {
 
-    private static final String PREFS_NAME = "com.example.dtsiounis.bakingapp.RecipeIngredientsWidget";
+    private static final String PREFS_NAME = "com.example.dtsiounis.bakingapp.widget.RecipeIngredientsWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     private static final String PREF_PREFIX_TITLE_KEY = "appwidget_title";
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;

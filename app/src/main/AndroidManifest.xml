@@ -39,7 +39,7 @@
                 android:value="com.example.dtsiounis.bakingapp.activities.RecipeStepsListActivity" />
         </activity>
 
-        <receiver android:name=".RecipeIngredientsWidget">
+        <receiver android:name=".widget.RecipeIngredientsWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -49,7 +49,7 @@
                 android:resource="@xml/recipe_ingredients_widget_info" />
         </receiver>
 
-        <activity android:name=".RecipeIngredientsWidgetConfigureActivity">
+        <activity android:name=".widget.RecipeIngredientsWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

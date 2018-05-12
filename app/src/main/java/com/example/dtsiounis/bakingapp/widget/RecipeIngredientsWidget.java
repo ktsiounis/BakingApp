@@ -1,10 +1,12 @@
-package com.example.dtsiounis.bakingapp;
+package com.example.dtsiounis.bakingapp.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.RemoteViews;
+
+import com.example.dtsiounis.bakingapp.R;
 
 /**
  * Implementation of App Widget functionality.

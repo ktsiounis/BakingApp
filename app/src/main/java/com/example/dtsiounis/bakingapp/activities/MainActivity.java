@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements RecipesRVAdapter.
         recipesRV.setLayoutManager(mLayoutManager);
         recipesRV.setItemAnimator(new DefaultItemAnimator());
         recipesRV.setHasFixedSize(true);
-        recipesRVAdapter = new RecipesRVAdapter(this);
+        recipesRVAdapter = new RecipesRVAdapter(this, MainActivity.this);
         recipesRV.setAdapter(recipesRVAdapter);
 
         if(savedInstanceState != null && savedInstanceState.containsKey("RECIPES_DATA")){

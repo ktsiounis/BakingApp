@@ -1,6 +1,7 @@
 package com.example.dtsiounis.bakingapp.fragments;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -78,9 +79,13 @@ public class RecipeStepsDetailFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
+        if(savedInstanceState != null && savedInstanceState.containsKey("VIDEO_CURRENT_STATE")){
+            initializePlayer(Uri.parse(step.getVideoURL()), savedInstanceState.getLong("VIDEO_CURRENT_STATE"));
+        }
+
         if (step != null) {
             recipeDetails.setText(step.getDescription());
-            initializePlayer(Uri.parse(step.getVideoURL()));
+            initializePlayer(Uri.parse(step.getVideoURL()), 0);
         }
 
         return rootView;
@@ -90,7 +95,7 @@ public class RecipeStepsDetailFragment extends Fragment {
      * Initialize ExoPlayer.
      * @param mediaUri The URI of the sample to play.
      */
-    private void initializePlayer(Uri mediaUri) {
+    private void initializePlayer(Uri mediaUri, long currentPosition) {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -103,7 +108,16 @@ public class RecipeStepsDetailFragment extends Fragment {
                     getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+            if(currentPosition != 0){
+                mExoPlayer.seekTo(currentPosition);
+            }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("VIDEO_CURRENT_STATE", mExoPlayer.getCurrentPosition());
     }
 
     /**
@@ -116,8 +130,8 @@ public class RecipeStepsDetailFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         releasePlayer();
     }
 }

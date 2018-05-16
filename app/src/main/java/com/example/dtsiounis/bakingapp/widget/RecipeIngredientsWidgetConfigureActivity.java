@@ -97,7 +97,7 @@ public class RecipeIngredientsWidgetConfigureActivity extends Activity implement
         recipesRV.setLayoutManager(mLayoutManager);
         recipesRV.setItemAnimator(new DefaultItemAnimator());
         recipesRV.setHasFixedSize(true);
-        recipesRVAdapter = new RecipesRVAdapter(this);
+        recipesRVAdapter = new RecipesRVAdapter(this, this);
         recipesRV.setAdapter(recipesRVAdapter);
 
         if(isOnline()){

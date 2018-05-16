@@ -88,7 +88,7 @@ public class RecipeStepsListActivity extends AppCompatActivity implements Simple
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, steps, mTwoPane, this));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, steps, mTwoPane, this, this));
     }
 
     @Override

@@ -50,15 +50,31 @@ public class MainActivity extends AppCompatActivity implements RecipesRVAdapter.
         recipesRVAdapter = new RecipesRVAdapter(this);
         recipesRV.setAdapter(recipesRVAdapter);
 
-        if(isOnline()){
-            loadRecipes();
+        if(savedInstanceState != null && savedInstanceState.containsKey("RECIPES_DATA")){
+            recipes = savedInstanceState.getParcelableArrayList("RECIPES_DATA");
+            recipesRVAdapter.swapList(recipes);
+            recipesRV.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable("LIST_STATE"));
+            Log.d("SavedInstanceState", "onCreate: Date retrieved");
+            progressBar.setVisibility(View.GONE);
         }
-        else{
-            Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
+        else {
+            if(isOnline()){
+                loadRecipes();
+            }
+            else{
+                Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
+            }
         }
 
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        //Save fetched recipes
+        outState.putParcelableArrayList("RECIPES_DATA", recipes);
+        outState.putParcelable("LIST_STATE", recipesRV.getLayoutManager().onSaveInstanceState());
     }
 
     public void loadRecipes(){
@@ -88,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements RecipesRVAdapter.
 
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
-
 
     @Override
     public void onItemClickListener(int position) {
